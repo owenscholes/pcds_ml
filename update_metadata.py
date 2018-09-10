@@ -44,16 +44,17 @@ def update_resolution(metadata):
     for i in range(metadata.shape[0]):
         network = metadata.loc[i,'network_name']
         id = metadata.loc[i,'native_id']
-        try:
-            record = pd.read_pickle('D:/PCIC/record_data/'+ network + '/' + id + '.pickle')
-            res = get_resolution(record)
-            metadata.at[i,'resolution'] = res
-        except FileNotFoundError:
-            if network not in ferrors:
-                ferrors.append(network)
-        except TypeError:
-            if network not in terrors:
-                terrors.append(network)
+        if metadata.at[i,'flag'] == 'NO RECORD':
+            try:
+                record = pd.read_pickle('D:/PCIC/station_data/'+ network + '/' + id + '.pickle')
+                res = get_resolution(record)
+                metadata.at[i,'resolution'] = res
+            except FileNotFoundError:
+                if network not in ferrors:
+                    ferrors.append(network)
+            except TypeError:
+                if network not in terrors:
+                    terrors.append(network)
     return metadata
     print('type errors:')
     print(terrors)
@@ -87,9 +88,13 @@ def flag_empty(metadata):
     #print('done')
     return metadata
 
-old_md = pd.read_csv('metadata/md_test3.csv')
+old_md = pd.read_csv('metadata/md_current.csv')
 
-new_md = flag_empty(old_md)
-print('done flagging')
+#x_md = flag_empty(old_md)
+#print('done flagging')
+
+new_md = update_resolution(old_md)
+print('done updating')
+
 new_md.to_csv('metadata/md_test4.csv')
 print('done writing')

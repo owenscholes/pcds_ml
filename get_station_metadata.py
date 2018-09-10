@@ -1,6 +1,6 @@
 import pandas as pd
 
-metadata = pd.read_csv('metadata.csv')
+metadata = pd.read_csv('md_current.csv')
 n_ids = metadata.loc[:,'native_id']
 
 inpt = input('station id: \n')
